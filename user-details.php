@@ -1,19 +1,43 @@
-<html>
-	<head>
-		<title>User Details</title>
-	</head>	
+<?php
 
-	<body>
-<nav>
-      <ul>
-        <li><a href="user-list.php">User List</a></li>
-        <li><a href="login-form.php">User Details</a></li>
-        <li><a href="user-add.php">Add User</a></li>
-      </ul>
-    </nav>
-    
-<h1>About Selected User</h1>
-		<h1 style="color:blue;">This person requires 5 mg of A48594 medicine a day. Ensure the prescription is filled by 2 pm. </h1>
+require_once  'login-page.php';
 
-    
-	<body>
+$conn = new mysqli($hn, $un, $pw, $db);
+if($conn->connect_error) die($conn->connect_error);
+
+$query = "SELECT * FROM Movies";
+
+$result = $conn->query($query); 
+if(!$result) die($conn->error);
+
+$rows = $result->num_rows;
+
+for($j=0; $j<$rows; $j++)
+{
+	//$result->data_seek($j); 
+	$row = $result->fetch_array(MYSQLI_ASSOC); 
+
+echo <<<_END
+	<pre>
+	is: $row[title]
+	username: $row[username]
+	forename: $row[forename]
+	surname: $row[surname]
+	password: $row[password]	
+	</pre>
+	
+	<form action='deleteRecord.php' method='post'>
+		<input type='hidden' name='delete' value='yes'>
+		<input type='hidden' name='isbn' value='$row[isbn]'>
+		<input type='submit' value='DELETE RECORD'>	
+	</form>
+	
+_END;
+
+}
+
+$conn->close();
+
+
+
+?>
